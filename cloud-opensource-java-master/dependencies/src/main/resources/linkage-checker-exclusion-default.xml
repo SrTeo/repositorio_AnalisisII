@@ -1,0 +1,407 @@
+<LinkageCheckerFilter>
+  <LinkageError>
+    <Source>
+      <Package name="reactor.core.publisher.Traces" />
+    </Source>
+    <Reason>
+      reactor-core's Traces catches Throwable to detect classes available in
+      Java 9+. As Linkage Checker targets Java 8, it ignores these errors to avoid
+      false positives.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/816
+    </Reason>
+  </LinkageError>
+
+  <LinkageError>
+    <Target>
+      <Package name="jdk.vm.ci" />
+    </Target>
+    <Source>
+      <Package name="com.oracle.svm" />
+    </Source>
+    <Reason>
+      GraalVM-related libraries depend on Java Compiler Interface (JVMCI) that
+      only exists in special JDK. These missing classes are false positives, because
+      the code is only invoked when running in a GraalVM.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/929
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="jdk.vm.ci" />
+    </Target>
+    <Source>
+      <Package name="com.oracle.graal" />
+    </Source>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="jdk.vm.ci" />
+    </Target>
+    <Source>
+      <Package name="org.graalvm" />
+    </Source>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="sun.text.normalizer" />
+    </Target>
+    <Source>
+      <Package name="com.oracle.svm.core.jdk8" />
+    </Source>
+    <Reason>
+      Substrate VM is part of GraalVM and the virtual machine references classes in the JVM-internal
+      package 'sun.text.normalizer' that are not available in JVM runtime.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1825
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="sun.util.logging.LoggingSupport" />
+    </Target>
+    <Source>
+      <Class name="com.oracle.svm.core.jdk.FormatAccessors" />
+    </Source>
+    <Reason>
+      Substrate VM references the JVM-internal class 'sun.util.logging.LoggingSupport' that are not
+      available in JVM runtime.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1825
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="sun.misc.JavaUtilZipFileAccess" />
+    </Target>
+    <Source>
+      <Class name="com.oracle.svm.core.jdk8.zipfile.ZipFileUtil" />
+    </Source>
+    <Reason>
+      Substrate VM references the class that are only available in Java 8.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1825
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="sun.misc.SharedSecrets" />
+    </Target>
+    <Source>
+      <Package name="com.oracle.svm.core.jdk8" />
+    </Source>
+    <Reason>
+      Substrate VM references the class that are only available in Java 8.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1825
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="sun.misc.PerfCounter" />
+    </Target>
+    <Source>
+      <Package name="com.oracle.svm.core.jdk8" />
+    </Source>
+    <Reason>
+      Substrate VM references the class that are only available in Java 8.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1825
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="org.mockito.internal.creation.bytebuddy.MockMethodDispatcher" />
+    </Target>
+    <Source>
+      <Package name="org.mockito.internal.creation.bytebuddy" />
+    </Source>
+    <Reason>
+      Mockito's MockMethodDispatcher uses special class loader to load
+      MockMethodDispatcher.raw. The class file with "raw" suffix is in mockito-core JAR file.
+      Because Linkage Checker does not use the special class loader, it ignores the missing
+      class errors to avoid false positives.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/407
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="com.sun.jna" />
+    </Target>
+    <Source>
+      <Package name="reactor.blockhound.shaded.net.bytebuddy.agent.VirtualMachine" />
+    </Source>
+    <Reason>
+      BlockHound shades ByteBuddy's VirtualMachine class. The class uses Java Native Access (JNA)
+      only when the com.sun.jna package is available. Therefore the invalid references from the
+      VirtualMachine class to JNA classes do not cause linkage errors at runtime.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1296
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="reactor.blockhound" />
+    </Target>
+    <Source>
+      <Class name="io.netty.util.internal.Hidden" />
+    </Source>
+    <Reason>
+      If BlockHound library is present in the class path, it loads the Hidden class to enable
+      Netty-BlockHound integration. In this case, the target classes are on the class path.
+      If BlockHound is not on the class path, nothing loads this source class.
+      https://github.com/reactor/BlockHound/blob/master/docs/custom_integrations.md
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="reactor.blockhound" />
+    </Target>
+    <Source>
+      <Class name="io.grpc.netty.shaded.io.netty.util.internal.Hidden" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      If BlockHound library is present in the class path, it loads the Hidden class to enable
+      Netty-BlockHound integration. In this case, the target classes are on the class path.
+      If BlockHound is not on the class path, nothing loads this source class.
+      https://github.com/reactor/BlockHound/blob/master/docs/custom_integrations.md
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.netty.util.internal.logging" />
+    </Source>
+    <Reason>
+      InternalLoggerFactory catches and handles errors caused by the missing classes.
+      More details in https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1872
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.grpc.netty.shaded.io.netty.util.internal.logging" />
+    </Source>
+    <Reason>
+      grpc-netty-shaded has copies of the netty's internal logging classes. which catches and
+      handles errors caused by the missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.netty.handler.codec.marshalling" />
+    </Source>
+    <Reason>
+      Netty users can optionally add JBoss Marshalling dependency to use
+      io.netty.handler.codec.marshalling package when they need the serialization algorithm.
+      By default, the classes in the package have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.grpc.netty.shaded.io.netty.handler.codec.marshalling" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      Netty users can optionally add JBoss Marshalling dependency to use
+      io.netty.handler.codec.marshalling package when they need the serialization algorithm.
+      By default, the classes in the package have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.netty.handler.codec.protobuf" />
+    </Source>
+    <Reason>
+      Netty users can optionally add protobuf dependency to use io.netty.handler.codec.protobuf
+      package when they need the serialization algorithm. By default, the classes in the package
+      have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.grpc.netty.shaded.io.netty.handler.codec.protobuf" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      Netty users can optionally add protobuf dependency to use io.netty.handler.codec.protobuf
+      package when they need the serialization algorithm. By default, the classes in the package
+      have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.netty.handler.codec.compression" />
+    </Source>
+    <Reason>
+      Netty users can optionally add corresponding dependencies to use compression algorithms (LZMA,
+      LZF, zlib). By default, the classes in the package have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Source>
+      <Package name="io.grpc.netty.shaded.io.netty.handler.codec.compression" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      Netty users can optionally add corresponding dependencies to use compression algorithms (LZMA,
+      LZF, zlib). By default, the classes in the package have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="io.netty.internal.tcnative" />
+    </Target>
+    <Source>
+      <Package name="io.netty.handler.ssl" />
+    </Source>
+    <Reason>
+      Netty users add the dependencies of platform-specific SSL implementations.
+      https://netty.io/wiki/forked-tomcat-native.html#wiki-h2-4
+      By default, the classes in the package have references to missing classes.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="com.jcraft.jzlib" />
+    </Target>
+    <Source>
+      <Class name="io.netty.handler.codec.spdy.SpdyHeaderBlockJZlibEncoder" />
+    </Source>
+    <Reason>
+      io.netty.handler.codec.spdy.SpdyHeaderBlockEncoder chooses the compression encoder based on
+      the Java platform. For Java 7 or later, it does not use SpdyHeaderBlockJZlibEncoder, as the
+      Zlib compression is available in JVM.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="com.jcraft.jzlib" />
+    </Target>
+    <Source>
+      <Class name="io.grpc.netty.shaded.io.netty.handler.codec.spdy.SpdyHeaderBlockJZlibEncoder" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)LinkageCheckerMainIntegrationTest
+      io.netty.handler.codec.spdy.SpdyHeaderBlockEncoder chooses the compression encoder based on
+      the Java platform. For Java 7 or later, it does not use SpdyHeaderBlockJZlibEncoder, as the
+      Zlib compression is available in JVM.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.bouncycastle" />
+    </Target>
+    <Source>
+      <Class name="io.netty.handler.ssl.util.BouncyCastleSelfSignedCertGenerator" />
+    </Source>
+    <Reason>
+      io.netty.handler.ssl.util.SelfSignedCertificate checks the availability of Bouncy Castle
+      library (http://www.bouncycastle.org/). If it's unavailable, then Netty does not use the
+      BouncyCastleSelfSignedCertGenerator.
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.bouncycastle" />
+    </Target>
+    <Source>
+      <Class name="io.grpc.netty.shaded.io.netty.handler.ssl.util.BouncyCastleSelfSignedCertGenerator" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      io.netty.handler.ssl.util.SelfSignedCertificate checks the availability of Bouncy Castle
+      library (http://www.bouncycastle.org/). If it's unavailable, then Netty does not use the
+      BouncyCastleSelfSignedCertGenerator.
+    </Reason>
+  </LinkageError>  <LinkageError>
+    <Target>
+      <Package name="org.eclipse.jetty.npn" />
+    </Target>
+    <Source>
+      <Class name="io.netty.handler.ssl.JettyNpnSslEngine" />
+    </Source>
+    <Reason>
+      The Jetty-ALPN and Jetty-NPN are the optional fallback method when Netty users cannot use
+      OpenSSL with netty-tcnative. Therefore, the JettyNpnSslEngine class has linkage errors by
+      default.
+      https://netty.io/wiki/requirements-for-4.x.html#tls-with-jdk-jetty-alpnnpn
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.eclipse.jetty.npn" />
+    </Target>
+    <Source>
+      <Class name="io.grpc.netty.shaded.io.netty.handler.ssl.JettyNpnSslEngine" />
+    </Source>
+    <Reason>
+      (For grpc-netty-shaded source)
+      The Jetty-ALPN and Jetty-NPN are the optional fallback method when Netty users cannot use
+      OpenSSL with netty-tcnative. Therefore, the JettyNpnSslEngine class has linkage errors by
+      default.
+      https://netty.io/wiki/requirements-for-4.x.html#tls-with-jdk-jetty-alpnnpn
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.eclipse.jetty.alpn" />
+    </Target>
+    <Source>
+      <Class name="io.netty.handler.ssl.JettyAlpnSslEngine" />
+    </Source>
+    <Reason>
+      The Jetty-ALPN and Jetty-NPN are the optional fallback method when Netty users cannot use
+      OpenSSL with netty-tcnative. Therefore, the JettyAlpnSslEngine class has linkage errors by
+      default.
+      https://netty.io/wiki/requirements-for-4.x.html#tls-with-jdk-jetty-alpnnpn
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.eclipse.jetty.alpn" />
+    </Target>
+    <Source>
+      <Class name="io.grpc.netty.shaded.io.netty.handler.ssl.JettyAlpnSslEngine" />
+    </Source>
+    <Reason>
+      The Jetty-ALPN and Jetty-NPN are the optional fallback method when Netty users cannot use
+      OpenSSL with netty-tcnative. Therefore, the JettyAlpnSslEngine class has linkage errors by
+      default.
+      https://netty.io/wiki/requirements-for-4.x.html#tls-with-jdk-jetty-alpnnpn
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Method className="com.google.api.VisibilityProto" name="getDescriptor" />
+    </Target>
+    <Source>
+      <Package name="com.google.appengine.repackaged.com.google" />
+    </Source>
+    <Reason>
+      The appengine-api-1.0-sdk shades certain classes, creating method references that do not
+      match original unshaded classes from the proto-google-common-protos artifact.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/2045
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Class name="org.apache.avalon.framework.logger.Logger" />
+    </Target>
+    <Source>
+      <Class name="org.apache.commons.logging.impl.AvalonLogger" />
+    </Source>
+    <Reason>
+      The AvalonLogger is used only when commons-logging users want to use Apache Avalon, which
+      has been closed since 2004. For those who don't use Apache Avalon, the class references does
+      not cause a problem.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1871
+    </Reason>
+  </LinkageError>
+  <LinkageError>
+    <Target>
+      <Package name="org.apache.log" />
+    </Target>
+    <Source>
+      <Class name="org.apache.commons.logging.impl.LogKitLogger" />
+    </Source>
+    <Reason>
+      The LogKitLogger is used only when commons-logging users want to use Apache Avalon, which
+      has been closed since 2004. For those who don't use Apache Avalon, the class references does
+      not cause a problem.
+      https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/1871
+    </Reason>
+  </LinkageError>
+</LinkageCheckerFilter>
